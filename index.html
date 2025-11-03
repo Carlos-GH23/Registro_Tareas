@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Tareas • PWA Offline (Only-Cache)</title>
+
+    <meta name="theme-color" content="#0F766E" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icons/apple-icon-180x180.png" sizes="180x180">
+</head>
+
+<body>
+    <header>
+        <h1>Gestión de Tareas — Offline</h1>
+    </header>
+
+    <main class="wrap">
+        <section class="card">
+            <form id="form">
+                <div>
+                    <label for="nombre">Nombre de la tarea</label>
+                    <input id="nombre" type="text" placeholder="Ej. Entregar reporte" required />
+                </div>
+                <div class="row">
+                    <div>
+                        <label for="fecha">Fecha</label>
+                        <input id="fecha" type="date" />
+                    </div>
+                    <div style="align-self:end;">
+                        <button class="btn-primary" id="btnAdd" type="submit">Agregar</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="card lists">
+            <div class="list">
+                <h3>Pendientes</h3>
+                <ul id="listaPendientes"></ul>
+            </div>
+            <div class="list">
+                <h3>Realizadas</h3>
+                <ul id="listaHechas"></ul>
+            </div>
+        </section>
+
+        <section class="card" style="padding:12px">
+            <div class="row">
+                <button class="btn-ghost" id="btnExport">Exportar JSON</button>
+                <button class="btn-ghost" id="btnImport">Importar JSON</button>
+            </div>
+            <input id="fileInput" type="file" accept="application/json" style="display:none" />
+        </section>
+    </main>
+
+    <footer>
+        100% sin conexión (estrategia Only-Cache) · PouchDB local · PWA instalable
+    </footer>
+
+    <div class="install-banner" id="installBanner">
+        <span>Instala la app en tu teléfono</span>
+        <button class="btn-primary" id="installBtn">Instalar</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+    </script>
+</body>
+
+</html>
