@@ -6,8 +6,8 @@ const ASSETS = [
     'index.html',
     'main.js',
     'manifest.json',
-    'images/icon/192.png',
-    'images/icon/512.png',
+    'images/icons/192.png',
+    'images/icons/512.png',
     'https://cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js'
 ];
 
