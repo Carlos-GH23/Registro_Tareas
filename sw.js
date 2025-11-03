@@ -6,9 +6,8 @@ const ASSETS = [
     'index.html',
     'main.js',
     'manifest.json',
-    'icons/icon-192.png',
-    'icons/icon-512.png',
-    'icons/apple-icon-180x180.png',
+    'images/icon/192.png',
+    'images/icon/512.png',
     'https://cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js'
 ];
 
