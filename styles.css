@@ -76,3 +76,37 @@ input[type="date"]::-webkit-calendar-picker-indicator{ filter: invert(1); opacit
 @media (min-width: 521px){
   .row{ align-items: end; }
 }
+
+/* iOS / Safari fixes para <input type="date"> */
+input[type="date"]{
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);   /* WebKit relleno de texto */
+  background-color: #0b1320;
+  border: 1px solid #2a364d;
+  min-height: 44px;                      /* evita “brinco” y zoom */
+  line-height: 44px;
+  padding: 10px 44px 10px 14px;          /* deja espacio al icono */
+  color-scheme: dark;                    /* usa paleta oscura nativa */
+  -webkit-appearance: none; appearance: none;
+}
+
+input[type="date"]::-webkit-datetime-edit{ padding: 0 0.25rem; }
+input[type="date"]::-webkit-datetime-edit-fields-wrapper{ color: var(--ink); }
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field{ color: var(--ink); }
+input[type="date"]::-webkit-datetime-edit-text{ opacity:.7; }
+
+input[type="date"]::-webkit-calendar-picker-indicator{
+  filter: invert(1);                      /* icono visible en oscuro */
+  opacity: .9;
+  margin: 0;
+}
+
+/* En móvil, botón “Agregar” debajo para que no se pegue al date */
+@media (max-width:520px){
+  .row{ flex-direction: column; align-items: stretch; }
+  .row > div:last-child{ align-self: stretch !important; }
+  .btn-primary{ width:100%; }
+}
+
