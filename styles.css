@@ -37,3 +37,42 @@ footer{padding:16px;text-align:center;color:#8aa8c2;font-size:.85rem}
 .install-banner.show{display:flex}
 .install-banner button{flex:1}
 .error{display:block; min-height:1.2em; color:#fca5a5; margin-top:4px;}
+
+/* ——— iOS / móvil polish ——— */
+
+/* Evita zoom de iOS al enfocar (inputs <16px) */
+input, button { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+/* Safe areas (notch) */
+body{
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+header{
+  padding-top: calc(12px + env(safe-area-inset-top));
+}
+
+/* Altura de viewport estable en móviles modernos */
+@supports (min-height: 100dvh) {
+  body { min-height: 100dvh; }
+}
+
+/* Arreglo del date picker en dark theme */
+input[type="date"]{ -webkit-appearance: none; appearance: none; }
+input[type="date"]::-webkit-date-and-time-value{ color: var(--ink); }
+input[type="date"]::-webkit-calendar-picker-indicator{ filter: invert(1); opacity:.85; }
+
+/* Botón no se sobrepone: en pantallas chicas se apila y ocupa ancho completo */
+@media (max-width: 520px){
+  .row{ flex-direction: column; align-items: stretch; }
+  .row > *{ flex: 1 1 auto; }
+  /* Sobrescribe tu inline style align-self:end del contenedor del botón */
+  .row > div:last-child{ align-self: stretch !important; }
+  .btn-primary{ width: 100%; }
+}
+
+/* En pantallas más anchas vuelve al layout horizontal */
+@media (min-width: 521px){
+  .row{ align-items: end; }
+}
