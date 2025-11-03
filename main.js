@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (installBanner) installBanner.classList.remove('show');
     });
 
+    // ---- Estado de interacción (para no spamear errores) ----
+    let touchedName = false;
+    let touchedFecha = false;
+
     // ---- Helpers de validación ----
     function setErr(input, el, msg) { input.classList.add('invalid'); el.textContent = msg; }
     function clearErr(input, el) { input.classList.remove('invalid'); el.textContent = ''; }
@@ -41,17 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function parseFechaISO(raw) {
         const v = (raw || '').trim();
         if (!v) return null;
-
-        // nativo
         if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-
-        // dd/mm/aaaa o dd-mm-aaaa
         const m = v.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
         if (m) {
             const d = m[1].padStart(2, '0');
             const mo = m[2].padStart(2, '0');
             const y = m[3];
-            // valida fecha real (30/02 inválido)
             const dt = new Date(`${y}-${mo}-${d}T00:00:00`);
             if (!isNaN(dt.getTime()) && dt.getUTCFullYear() == y && (dt.getUTCMonth() + 1) == +mo && dt.getUTCDate() == +d) {
                 return `${y}-${mo}-${d}`;
@@ -60,35 +59,58 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    function validateFields() {
+    // showMsgs=true muestra/oculta mensajes; false solo calcula sin tocar el UI
+    function validateFields(showMsgs = false) {
         const nombre = (inputName.value || '').trim();
         const fechaISO = parseFechaISO(inputFecha.value);
         let ok = true;
 
-        if (!nombre) { setErr(inputName, eNombre, 'Ingresa el nombre de la tarea.'); ok = false; }
-        else { clearErr(inputName, eNombre); }
+        if (!nombre) {
+            ok = false;
+            if (showMsgs && touchedName) setErr(inputName, eNombre, 'Ingresa el nombre de la tarea.');
+        } else if (showMsgs) {
+            clearErr(inputName, eNombre);
+        }
 
-        if (!fechaISO) { setErr(inputFecha, eFecha, 'Fecha inválida. Usa el calendario o dd/mm/aaaa.'); ok = false; }
-        else { clearErr(inputFecha, eFecha); }
+        if (!fechaISO) {
+            ok = false;
+            if (showMsgs && touchedFecha) setErr(inputFecha, eFecha, 'Fecha inválida. Usa el calendario o dd/mm/aaaa.');
+        } else if (showMsgs) {
+            clearErr(inputFecha, eFecha);
+        }
 
         return { ok, fechaISO, nombre };
     }
 
-    // Validación en vivo
-    inputName.addEventListener('input', validateFields);
-    inputFecha.addEventListener('input', validateFields);
-    inputFecha.addEventListener('change', validateFields);
+    function clearFormAndErrors() {
+        inputName.value = '';
+        inputFecha.value = '';
+        clearErr(inputName, eNombre);
+        clearErr(inputFecha, eFecha);
+        touchedName = false;
+        touchedFecha = false;
+    }
+
+    // Marcar campos como "tocados" y validar mostrando mensajes
+    inputName.addEventListener('blur', () => { touchedName = true; validateFields(true); });
+    inputFecha.addEventListener('blur', () => { touchedFecha = true; validateFields(true); });
+    inputName.addEventListener('input', () => { if (touchedName) validateFields(true); });
+    inputFecha.addEventListener('input', () => { if (touchedFecha) validateFields(true); });
+    inputFecha.addEventListener('change', () => { touchedFecha = true; validateFields(true); });
 
     // Crear tarea
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const { ok, fechaISO, nombre } = validateFields();
+
+        // En submit mostramos mensajes aunque no estén "tocados"
+        touchedName = true; touchedFecha = true;
+        const { ok, fechaISO, nombre } = validateFields(true);
         if (!ok) return;
 
         const tarea = {
             _id: new Date().toISOString(),
             nombre,
-            fecha: fechaISO,           // guardamos normalizado
+            fecha: fechaISO,
             status: 'pendiente',
             createdAt: Date.now(),
             updatedAt: Date.now()
@@ -96,9 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await db.put(tarea);
-            inputName.value = '';
-            inputFecha.value = '';
-            validateFields(); // limpia mensajes
+            clearFormAndErrors();   // <-- ya NO llamamos a validateFields() aquí
             render();
         } catch (err) {
             console.error('Error al agregar tarea', err);
