@@ -1,10 +1,11 @@
 /* Offline-only (Only-Cache) Service Worker */
-const CACHE = 'only-cache-v2';
+const CACHE = 'only-cache-v3';
 
 // Lista de recursos estáticos a precachear (relativos al scope)
 const ASSETS = [
     'index.html',
     'main.js',
+    'styles.css',
     'manifest.json',
     'images/icons/192.png',
     'images/icons/512.png',
