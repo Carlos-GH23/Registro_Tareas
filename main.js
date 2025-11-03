@@ -33,41 +33,62 @@ document.addEventListener('DOMContentLoaded', () => {
         if (installBanner) installBanner.classList.remove('show');
     });
 
-    // --- Validación ---
-    function setErr(input, el, msg) {
-        input.classList.add('invalid');
-        el.textContent = msg;
+    // ---- Helpers de validación ----
+    function setErr(input, el, msg) { input.classList.add('invalid'); el.textContent = msg; }
+    function clearErr(input, el) { input.classList.remove('invalid'); el.textContent = ''; }
+
+    // Acepta: YYYY-MM-DD (nativo) o dd/mm/aaaa | dd-mm-aaaa y devuelve YYYY-MM-DD
+    function parseFechaISO(raw) {
+        const v = (raw || '').trim();
+        if (!v) return null;
+
+        // nativo
+        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+
+        // dd/mm/aaaa o dd-mm-aaaa
+        const m = v.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+        if (m) {
+            const d = m[1].padStart(2, '0');
+            const mo = m[2].padStart(2, '0');
+            const y = m[3];
+            // valida fecha real (30/02 inválido)
+            const dt = new Date(`${y}-${mo}-${d}T00:00:00`);
+            if (!isNaN(dt.getTime()) && dt.getUTCFullYear() == y && (dt.getUTCMonth() + 1) == +mo && dt.getUTCDate() == +d) {
+                return `${y}-${mo}-${d}`;
+            }
+        }
+        return null;
     }
-    function clearErr(input, el) {
-        input.classList.remove('invalid');
-        el.textContent = '';
-    }
+
     function validateFields() {
         const nombre = (inputName.value || '').trim();
-        const fecha = inputFecha.value || '';
+        const fechaISO = parseFechaISO(inputFecha.value);
         let ok = true;
 
         if (!nombre) { setErr(inputName, eNombre, 'Ingresa el nombre de la tarea.'); ok = false; }
         else { clearErr(inputName, eNombre); }
 
-        if (!fecha) { setErr(inputFecha, eFecha, 'Selecciona una fecha.'); ok = false; }
+        if (!fechaISO) { setErr(inputFecha, eFecha, 'Fecha inválida. Usa el calendario o dd/mm/aaaa.'); ok = false; }
         else { clearErr(inputFecha, eFecha); }
 
-        return ok;
+        return { ok, fechaISO, nombre };
     }
+
     // Validación en vivo
-    inputName.addEventListener('input', () => validateFields());
-    inputFecha.addEventListener('change', () => validateFields());
+    inputName.addEventListener('input', validateFields);
+    inputFecha.addEventListener('input', validateFields);
+    inputFecha.addEventListener('change', validateFields);
 
     // Crear tarea
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!validateFields()) return;
+        const { ok, fechaISO, nombre } = validateFields();
+        if (!ok) return;
 
         const tarea = {
             _id: new Date().toISOString(),
-            nombre: (inputName.value || '').trim(),
-            fecha: inputFecha.value,
+            nombre,
+            fecha: fechaISO,           // guardamos normalizado
             status: 'pendiente',
             createdAt: Date.now(),
             updatedAt: Date.now()

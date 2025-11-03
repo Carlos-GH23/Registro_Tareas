@@ -1,5 +1,5 @@
 /* Offline-only (Only-Cache) Service Worker */
-const CACHE = 'only-cache-v4';
+const CACHE = 'only-cache-v5';
 
 // Lista de recursos estáticos a precachear (relativos al scope)
 const ASSETS = [
