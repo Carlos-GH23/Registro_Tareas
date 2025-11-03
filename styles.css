@@ -12,9 +12,11 @@ h1{margin:0;font-size:1.15rem;letter-spacing:.3px}
 .card{background:var(--card);border:1px solid #1f2937;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.2)}
 form{display:grid;gap:10px;padding:14px}
 label{font-size:.9rem;color:var(--muted)}
+.req{color:#fca5a5}
 input[type="text"], input[type="date"]{
   width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2a364d;background:#0b1320;color:var(--ink);outline:none;
 }
+input.invalid{border-color:var(--danger); box-shadow:0 0 0 2px rgba(185,28,28,.18) inset;}
 button{appearance:none;border:0;border-radius:14px;padding:12px 14px;font-weight:600}
 .btn-primary{background:var(--accent);color:white}
 .btn-ghost{background:transparent;border:1px solid #2a364d;color:var(--ink)}
@@ -34,3 +36,4 @@ footer{padding:16px;text-align:center;color:#8aa8c2;font-size:.85rem}
 .install-banner{display:none; gap:8px; padding:10px 12px; border-top:1px solid #1f2937; background:#0f172a; position:sticky; bottom:0}
 .install-banner.show{display:flex}
 .install-banner button{flex:1}
+.error{display:block; min-height:1.2em; color:#fca5a5; margin-top:4px;}

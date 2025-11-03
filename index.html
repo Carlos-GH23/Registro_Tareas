@@ -8,7 +8,7 @@
 
     <meta name="theme-color" content="#0F766E" />
     <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles.css">
 
     <!-- iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,15 +23,17 @@
 
     <main class="wrap">
         <section class="card">
-            <form id="form">
+            <form id="form" novalidate>
                 <div>
-                    <label for="nombre">Nombre de la tarea</label>
+                    <label for="nombre">Nombre de la tarea <span class="req">*</span></label>
                     <input id="nombre" type="text" placeholder="Ej. Entregar reporte" required />
+                    <small class="error" id="eNombre"></small>
                 </div>
                 <div class="row">
                     <div>
-                        <label for="fecha">Fecha</label>
-                        <input id="fecha" type="date" />
+                        <label for="fecha">Fecha <span class="req">*</span></label>
+                        <input id="fecha" type="date" required />
+                        <small class="error" id="eFecha"></small>
                     </div>
                     <div style="align-self:end;">
                         <button class="btn-primary" id="btnAdd" type="submit">Agregar</button>
@@ -64,17 +66,13 @@
         100% sin conexión (estrategia Only-Cache) · PouchDB local · PWA instalable
     </footer>
 
+    <div class="install-banner" id="installBanner">
+        <span>Instala la app en tu teléfono</span>
+        <button class="btn-primary" id="installBtn">Instalar</button>
+    </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
-    <script src="main.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js');
-            });
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js" defer></script>
+    <script src="./main.js" defer></script>
 </body>
 
 </html>
